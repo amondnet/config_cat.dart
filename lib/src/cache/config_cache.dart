@@ -1,8 +1,10 @@
 import 'package:logging/logging.dart';
 
+import '../project_config.dart';
+
 abstract class ConfigCache {
   final Logger logger = Logger('ConfigCache');
-  String _inMemoryValue;
+  ProjectConfig _inMemoryValue;
 
   ConfigCache();
 
@@ -11,25 +13,25 @@ abstract class ConfigCache {
   ///
   /// @return the cached configuration.
   /// @throws Exception if unable to read the cache.
-  String read();
+  ProjectConfig read();
 
   /// * Child classes has to implement this method, the {@link ConfigCatClient}
   /// uses it to set the actual cached value.
   ///
   /// @param value the new value to cache.
   /// @throws Exception if unable to save the value.
-  void write(String value);
+  void write(ProjectConfig value);
 
   /// Through this getter, the in-memory representation of the cached value can be accessed.
   /// When the underlying cache implementations is not able to load or store its value,
   /// this will represent the latest cached configuration.
   ///
   /// @return the cached value in memory.
-  String inMemoryValue() {
+  ProjectConfig inMemoryValue() {
     return this._inMemoryValue;
   }
 
-  String get() {
+  ProjectConfig get() {
     try {
       return this.read();
     } catch (e) {
@@ -38,7 +40,7 @@ abstract class ConfigCache {
     }
   }
 
-  void set(String value) {
+  void set(ProjectConfig value) {
     try {
       this._inMemoryValue = value;
       this.write(value);
@@ -50,10 +52,10 @@ abstract class ConfigCache {
 
 class InMemoryConfigCache extends ConfigCache {
   @override
-  String read() {
+  ProjectConfig read() {
     return super.inMemoryValue();
   }
 
   @override
-  void write(String value) {}
+  void write(ProjectConfig value) {}
 }

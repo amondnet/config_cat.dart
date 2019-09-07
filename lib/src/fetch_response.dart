@@ -1,8 +1,9 @@
+import 'package:config_cat/src/project_config.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 class FetchResponse {
   Status status;
-  String config;
+  ProjectConfig config;
 
   FetchResponse(this.status, this.config);
 

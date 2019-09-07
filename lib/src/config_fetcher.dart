@@ -1,8 +1,12 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:config_cat/src/fetch_response.dart';
+import 'package:config_cat/src/project_config.dart';
 import 'package:dio/dio.dart';
 import 'package:logging/logging.dart';
+
+import 'model/config.dart';
 
 class ConfigFetcher {
   final Logger logger = Logger('ConfigFetcher');
@@ -11,10 +15,9 @@ class ConfigFetcher {
   String _version = "0.0.1";
   String _mode;
 
-  String _eTag;
   ConfigFetcher(this._dio, String apiKey,
       {String baseUrl = "https://cdn.configcat.com"}) {
-    this._url = '$baseUrl/configuration-files/" + apiKey + "/config_v2.json';
+    this._url = '$baseUrl/configuration-files/$apiKey/config_v2.json';
   }
 
   setUrl(String url) {
@@ -25,34 +28,45 @@ class ConfigFetcher {
     _mode = mode;
   }
 
-  Future<FetchResponse> getConfigurationJsonString() {
-    return _dio.get<String>('', options: getRequest()).then((response) {
+  Future<FetchResponse> fetch([ProjectConfig lastConfig]) {
+    return _dio
+        .get<String>('', options: getRequest(lastConfig))
+        .then((response) {
       if (response.statusCode >= 200 && response.statusCode < 300) {
         logger.fine('Fetch was successful: new config fetched');
-        return FetchResponse(Status.FETCHED, response.data);
+        return FetchResponse(
+            Status.FETCHED,
+            ProjectConfig(parse(response.data),
+                eTag: response.headers.value(HttpHeaders.etagHeader)));
       } else if (response.statusCode == 304) {
         logger.fine('Fetch was successful: config not modified');
-        return FetchResponse(Status.NOTMODIFIED, response.data);
+        return FetchResponse(
+            Status.NOTMODIFIED, ProjectConfig(parse(response.data)));
       } else {
         logger.fine('Non success status code: ${response.statusCode}');
       }
-      return FetchResponse(Status.FAILED, response.data);
+      return FetchResponse(Status.FAILED, ProjectConfig(parse(response.data)));
     }).catchError((e) {
       logger.severe(
           'An error occurred during fetching the latest configuration.', e);
-      return FetchResponse(Status.FAILED, null);
+      return FetchResponse(Status.FAILED, ProjectConfig(null));
     });
+  }
+
+  Configurations parse(dynamic data) {
+    final map = jsonDecode(data) as Map<String, dynamic>;
+    return map.map((k, v) => MapEntry(k, Config.fromJson(v)));
   }
 
   void close() {
     _dio.clear();
   }
 
-  RequestOptions getRequest() {
+  RequestOptions getRequest([ProjectConfig lastConfig]) {
     final header = {'X-ConfigCat-UserAgent': 'ConfigCat-Java/$_mode-$_version'};
 
-    if (_eTag != null) {
-      header['If-None-Match'] = _eTag;
+    if (lastConfig != null && lastConfig.eTag != null) {
+      header['If-None-Match'] = lastConfig.eTag;
     }
     return RequestOptions(headers: header, baseUrl: this._url);
   }

@@ -1,0 +1,49 @@
+{
+  "isAwesomeFeatureEnabled": {
+    "Value": false,
+    "SettingType": 0,
+    "RolloutPercentageItems": [],
+    "RolloutRules": []
+  },
+  "test": {
+    "Value": true,
+    "SettingType": 0,
+    "RolloutPercentageItems": [],
+    "RolloutRules": []
+  },
+  "testText": {
+    "Value": "productionvvvv",
+    "SettingType": 1,
+    "RolloutPercentageItems": [
+      {
+        "Order": 0,
+        "Value": "251",
+        "Percentage": 25
+      },
+      {
+        "Order": 1,
+        "Value": "252",
+        "Percentage": 25
+      },
+      {
+        "Order": 2,
+        "Value": "253",
+        "Percentage": 25
+      },
+      {
+        "Order": 3,
+        "Value": "254",
+        "Percentage": 25
+      }
+    ],
+    "RolloutRules": [
+      {
+        "Order": 0,
+        "ComparisonAttribute": "Identifier",
+        "Comparator": 0,
+        "ComparisonValue": "111",
+        "Value": "my value"
+      }
+    ]
+  }
+}

@@ -1,26 +1,25 @@
 name: config_cat
-description: A new Flutter project.
+description: A library for config cat
 version: 0.0.1
-author:
-homepage:
+author: Minsu Lee <amond@amond.net>
+homepage: https://github.com/amondnet/config_cat.dart
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
 
 dependencies:
-  flutter:
-    sdk: flutter
   quiver: '>=2.0.0 <3.0.0'
   logging: ^0.11.3+2
   dio: ^2.1.0
   json_annotation: ^2.0.0
   equatable: ^0.5.1
+  synchronized: ^2.1.0+1
+  # crypto: ^2.1.2
 
 dev_dependencies:
-  flutter_test:
-    sdk: flutter
   build_runner: ^1.0.0
   json_serializable: ^2.0.0
+  test: ^1.6.9
 
 
 

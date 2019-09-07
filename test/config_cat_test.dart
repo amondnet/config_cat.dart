@@ -1,13 +1,20 @@
-import 'package:flutter_test/flutter_test.dart';
+import 'dart:convert';
+import 'dart:io';
 
 import 'package:config_cat/config_cat.dart';
+import 'package:config_cat/src/model/config.dart';
+import 'package:test/test.dart';
 
 void main() {
-  test('adds one to input values', () {
-    final calculator = Calculator();
-    expect(calculator.addOne(2), 3);
-    expect(calculator.addOne(-7), -6);
-    expect(calculator.addOne(0), 1);
-    expect(() => calculator.addOne(null), throwsNoSuchMethodError);
+  group('A group of tests', () {
+    setUp(() {});
+
+    test('First Test', () async {
+      final file = new File('test_resources/test.json');
+      final map = jsonDecode(await file.readAsString()) as Map<String, dynamic>;
+      final configurations =
+          map.map((string, value) => MapEntry(string, Config.fromJson(value)));
+      configurations.keys.forEach((s) => print(s));
+    });
   });
 }

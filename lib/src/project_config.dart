@@ -1,12 +1,14 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter/foundation.dart';
+import 'package:meta/meta.dart';
+
+import 'model/config.dart';
 
 @immutable
 class ProjectConfig extends Equatable {
-  DateTime timeStamp;
+  DateTime timeStamp = DateTime.now().toUtc();
   String eTag;
-  String jsonString;
+  Configurations configurations;
 
-  ProjectConfig(this.jsonString, this.timeStamp, this.eTag)
-      : super([jsonString, eTag]);
+  ProjectConfig(this.configurations, {this.timeStamp, this.eTag})
+      : super([configurations, eTag]);
 }
