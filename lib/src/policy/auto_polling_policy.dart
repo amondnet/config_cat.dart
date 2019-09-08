@@ -1,36 +1,47 @@
 import 'dart:async';
 
+import 'package:async/async.dart';
 import 'package:config_cat/src/cache/config_cache.dart';
 import 'package:config_cat/src/config_fetcher.dart';
 import 'package:config_cat/src/configuration_parser.dart';
 import 'package:config_cat/src/model/config.dart';
 import 'package:config_cat/src/policy/refresh_policy.dart';
+import 'package:logging/logging.dart';
 
-class AuthPollingPolicy extends RefreshPolicy {
-  Timer timer;
+class AutoPollingPolicy extends RefreshPolicy {
+  final Logger logger = Logger('AutoPollingPolicy');
+  Stream timer;
   final List<ConfigurationChangeListener> listeners = [];
   StreamController _streamController;
   DateTime _maxInitWaitExpire;
   Stream<ConfigurationChangedEvent> stream;
   static final ConfigurationParser _parser = new ConfigurationParser();
+  Duration pollingInterval;
 
-  AuthPollingPolicy(
+  AutoPollingPolicy(
     ConfigCache cache,
     ConfigFetcher configFetcher, {
-    Duration pollingInterval = const Duration(seconds: 60),
+    this.pollingInterval = const Duration(seconds: 60),
     Duration maxInitWaitTime = const Duration(seconds: 10),
   }) : super(cache, configFetcher) {
-    this.timer = Timer.periodic(pollingInterval, (_) {
-      _refresh('auto');
-    });
-
-    _streamController = StreamController();
+    logger.fine('pollingInterval : $pollingInterval');
+    _streamController = StreamController<ConfigurationChangedEvent>();
     stream = _streamController.stream.asBroadcastStream();
     _maxInitWaitExpire = DateTime.now().toUtc().add(maxInitWaitTime);
+    start();
+  }
+
+  void start() async {
+    await _refreshAsync('init');
+    timer = new Stream.periodic(pollingInterval, (count) {
+      logger.finer('autoPoilling');
+      _refresh('auto');
+    });
+    //timer.listen(onData)
   }
 
   void dispose() {
-    this.timer?.cancel();
+    logger.finer('dispose');
     this._streamController.close();
   }
 
@@ -45,10 +56,13 @@ class AuthPollingPolicy extends RefreshPolicy {
 
   @override
   Future<void> refresh() {
+    logger.finer('refresh');
     return _refreshAsync("manual");
   }
 
   Future<void> _refreshAsync(String sender) async {
+    logger.finer('_refreshAsync ( $sender )');
+
     var lastConfig = cache.get();
     final response = await fetcher.fetch(lastConfig);
     final newConfig = response.config;
@@ -64,6 +78,7 @@ class AuthPollingPolicy extends RefreshPolicy {
   }
 
   void addConfigurationChangeListener(ConfigurationChangeListener listener) {
+    logger.finer('addConfigurationChangeListener');
     listeners.add(listener);
   }
 
@@ -72,16 +87,22 @@ class AuthPollingPolicy extends RefreshPolicy {
   }
 
   void _broadcastConfigurationChanged(Configurations newConfiguration) {
+    logger.finer('_broadcastConfigurationChanged');
     listeners.forEach((listener) {
-      listener.onConfigurationChanged(_parser, newConfiguration);
+      listener(_parser, newConfiguration);
+      //listener.onConfigurationChanged(_parser, newConfiguration);
     });
   }
 }
 
+typedef void ConfigurationChangeListener(
+    ConfigurationParser parser, Configurations newConfiguration);
+
+/*
 abstract class ConfigurationChangeListener {
   void onConfigurationChanged(
       ConfigurationParser parser, Configurations newConfiguration);
-}
+}*/
 
 class ConfigurationChangedEvent {
   final ConfigurationParser parser;

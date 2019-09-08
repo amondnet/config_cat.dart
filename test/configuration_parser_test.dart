@@ -6,15 +6,22 @@ import 'package:config_cat/src/model/config.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('A group of tests', () {
-    setUp(() {});
+  group(ConfigurationParser, () {
+    ConfigurationParser parser;
+    setUp(() {
+      parser = ConfigurationParser();
+    });
 
-    test('First Test', () async {
+    test('ConfigurationParser Test', () async {
       final file = new File('test_resources/test.json');
       final map = jsonDecode(await file.readAsString()) as Map<String, dynamic>;
-      final configurations =
-          map.map((string, value) => MapEntry(string, Config.fromJson(value)));
+
+      final Configurations configurations = Configurations.fromJson(map);
       configurations.keys.forEach((s) => print(s));
+
+      final value = parser.parseValue(configurations, "test", null);
+
+      expect(value, isTrue);
     });
   });
 }

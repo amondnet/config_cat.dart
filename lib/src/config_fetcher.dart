@@ -54,8 +54,8 @@ class ConfigFetcher {
   }
 
   Configurations parse(dynamic data) {
-    final map = jsonDecode(data) as Map<String, dynamic>;
-    return map.map((k, v) => MapEntry(k, Config.fromJson(v)));
+    final json = jsonDecode(data) as Map<String, dynamic>;
+    return Configurations.fromJson(json);
   }
 
   void close() {

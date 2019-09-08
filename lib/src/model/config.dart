@@ -1,3 +1,6 @@
+import 'dart:collection';
+import 'dart:convert';
+
 import 'package:config_cat/src/model/percentage.dart';
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -6,7 +9,37 @@ import 'package:meta/meta.dart';
 import 'rule.dart';
 part 'config.g.dart';
 
-mixin Configurations implements Map<String, Config> {}
+class Configurations extends MapBase<String, Config> {
+  final Map<String, Config> _map;
+  Configurations(this._map);
+
+  factory Configurations.fromJson(Map<String, dynamic> json) {
+    return Configurations(json.map((k, v) => MapEntry(k, Config.fromJson(v))));
+  }
+
+  @override
+  Config operator [](Object key) {
+    return _map[key];
+  }
+
+  @override
+  void operator []=(String key, Config value) {
+    _map[key] = value;
+  }
+
+  @override
+  void clear() {
+    _map.clear();
+  }
+
+  @override
+  Iterable<String> get keys => _map.keys;
+
+  @override
+  Config remove(Object key) {
+    return _map.remove(key);
+  }
+}
 
 @JsonSerializable()
 @immutable

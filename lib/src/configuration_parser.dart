@@ -8,11 +8,12 @@ import 'rollout_evaluator.dart';
 class ConfigurationParser {
   final RolloutEvaluator _rolloutEvaluator = new RolloutEvaluator();
 
-  List<String> getAllKeys(Configurations configurations) {
+  List<String> getAllKeys(Map<String, Config> configurations) {
     return configurations.keys.toList();
   }
 
-  dynamic parseValue(Configurations configurations, String key, User user) {
+  dynamic parseValue(
+      Map<String, Config> configurations, String key, User user) {
     return _rolloutEvaluator.evaluate(configurations[key], key, user);
   }
 }

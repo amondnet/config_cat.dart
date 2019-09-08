@@ -24,7 +24,7 @@ class ConfigCatClient {
       cache = InMemoryConfigCache();
     }
     if (this.refreshPolicy == null) {
-      refreshPolicy = AuthPollingPolicy(cache, fetcher);
+      refreshPolicy = AutoPollingPolicy(cache, fetcher);
     }
   }
   Future<dynamic> getValue(String key, dynamic defaultValue, {User user}) {
