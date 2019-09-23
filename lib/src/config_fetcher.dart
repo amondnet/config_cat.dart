@@ -48,7 +48,8 @@ class ConfigFetcher {
       return FetchResponse(Status.FAILED, ProjectConfig(parse(response.data)));
     }).catchError((e) {
       logger.severe(
-          'An error occurred during fetching the latest configuration.', e);
+          'An error occurred during fetching the latest configuration. : $e',
+          e);
       return FetchResponse(Status.FAILED, ProjectConfig(null));
     });
   }
