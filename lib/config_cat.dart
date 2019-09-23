@@ -8,3 +8,6 @@ export 'src/fetch_response.dart';
 export 'src/project_config.dart';
 export 'src/rollout_evaluator.dart';
 export 'package:config_cat/src/model/user.dart';
+export 'src/policy/auto_polling_policy.dart';
+export 'src/policy/lazy_loading_policy.dart';
+export 'src/policy/refresh_policy.dart';

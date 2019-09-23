@@ -88,4 +88,5 @@ void main() {
       expect(newConfig['test'].value, isFalse);
     });
   });
+
 }

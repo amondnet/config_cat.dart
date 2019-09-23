@@ -1,0 +1,26 @@
+{
+  "isAwesomeFeatureEnabled": {
+    "Value": false,
+    "SettingType": 0,
+    "RolloutPercentageItems": [],
+    "RolloutRules": []
+  },
+  "test": {
+    "Value": false,
+    "SettingType": 0,
+    "RolloutPercentageItems": [],
+    "RolloutRules": []
+  },
+  "testText": {
+    "Value": "testValue",
+    "SettingType": 1,
+    "RolloutPercentageItems": [],
+    "RolloutRules": []
+  },
+  "hotkey": {
+    "Value": "W3siaWQiOjEsImxhYmVsIjoi64KYIOutkCDrqLnsl4jslrR+IPCfjZoiLCJlbW90aWNvbiI6IvCfjZoiLCJhY3RpdmUiOmZhbHNlLCJjb21tYW5kIjoibG9nRm9vZCJ9LHsiaWQiOjIsImxhYmVsIjoi64KYIOusvCDrp4jshajslrR+IPCfkqciLCJlbW90aWNvbiI6IvCfkqciLCJhY3RpdmUiOmZhbHNlLCJjb21tYW5kIjoibG9nV2F0ZXIifSx7ImlkIjozLCJsYWJlbCI6IuuCmCDsmrTrj5ntlojslrQhIPCfkqoiLCJlbW90aWNvbiI6IvCfkqoiLCJhY3RpdmUiOmZhbHNlLCJjb21tYW5kIjoibG9nRXhlcmNpc2UifSx7ImlkIjo0LCJsYWJlbCI6IuuCmCDssrTspJEg7LK07YGs7ZWg656Y4pyFIiwiZW1vdGljb24iOiLinIUiLCJhY3RpdmUiOmZhbHNlLCJjb21tYW5kIjoibW9uaXRvcmluZ19JTklUIn0seyJpZCI6MSwibGFiZWwiOiLrgpgg67Cw6rOg7YyMIiwiY29tbWFuZCI6ImludGVudCNpLWFtLWh1bmdyeSJ9XQ==",
+    "SettingType": 1,
+    "RolloutPercentageItems": [],
+    "RolloutRules": []
+  }
+}
