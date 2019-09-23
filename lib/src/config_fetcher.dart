@@ -30,7 +30,7 @@ class ConfigFetcher {
 
   Future<FetchResponse> fetch([ProjectConfig lastConfig]) {
     return _dio
-        .get<String>('', options: getRequest(lastConfig))
+        .get<String>(_url, options: getRequest(lastConfig))
         .then((response) {
       if (response.statusCode >= 200 && response.statusCode < 300) {
         logger.fine('Fetch was successful: new config fetched');
