@@ -19,6 +19,10 @@ class ConfigCatClient {
       ConfigCache cache,
       this.refreshPolicy,
       this.maxWaitTimeForSyncCallsInSeconds}) {
+    if (dio == null) {
+      dio = Dio();
+    }
+
     ConfigFetcher fetcher = ConfigFetcher(dio, apiKey);
     if (cache == null) {
       cache = InMemoryConfigCache();
@@ -29,7 +33,9 @@ class ConfigCatClient {
   }
   Future<dynamic> getValue(String key, dynamic defaultValue, {User user}) {
     return refreshPolicy.getConfiguration().then((config) {
-      _parser.parseValue(config, key, user);
+      return _parser.parseValue(config, key, user);
+    }).catchError((e) {
+      logger.severe("getValue Error : $e", e);
     });
   }
 }
