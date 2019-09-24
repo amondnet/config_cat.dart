@@ -40,12 +40,11 @@ class ConfigFetcher {
                 eTag: response.headers.value(HttpHeaders.etagHeader)));
       } else if (response.statusCode == 304) {
         logger.fine('Fetch was successful: config not modified');
-        return FetchResponse(
-            Status.NOTMODIFIED, ProjectConfig(parse(response.data)));
+        return FetchResponse(Status.NOTMODIFIED, lastConfig);
       } else {
         logger.fine('Non success status code: ${response.statusCode}');
       }
-      return FetchResponse(Status.FAILED, ProjectConfig(parse(response.data)));
+      return FetchResponse(Status.FAILED, lastConfig);
     }).catchError((e) {
       logger.severe(
           'An error occurred during fetching the latest configuration. : $e',
