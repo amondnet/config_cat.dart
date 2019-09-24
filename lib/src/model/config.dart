@@ -18,6 +18,11 @@ class Configurations extends MapBase<String, Config> {
   }
 
   @override
+  String toString() {
+    return json.encode(_map);
+  }
+
+  @override
   Config operator [](Object key) {
     return _map[key];
   }
