@@ -25,14 +25,9 @@ Config _$ConfigFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> _$ConfigToJson(Config instance) => <String, dynamic>{
       'Value': instance.value,
-      'SettingType': _$SettingTypeEnumMap[instance.settingType],
+      'SettingType': instance.settingType == null
+          ? null
+          : settingTypeToInt(instance.settingType),
       'RolloutPercentageItems': instance.rolloutPercentageItems,
       'RolloutRules': instance.rolloutRules
     };
-
-const _$SettingTypeEnumMap = <SettingType, dynamic>{
-  SettingType.BOOL: 'BOOL',
-  SettingType.STRING: 'STRING',
-  SettingType.INT: 'INT',
-  SettingType.DOUBLE: 'DOUBLE'
-};

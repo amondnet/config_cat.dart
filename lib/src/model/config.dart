@@ -51,7 +51,8 @@ class Configurations extends MapBase<String, Config> {
 class Config extends Equatable {
   @JsonKey(name: 'Value')
   final dynamic value;
-  @JsonKey(name: 'SettingType', fromJson: parseSettingType)
+  @JsonKey(
+      name: 'SettingType', fromJson: parseSettingType, toJson: settingTypeToInt)
   final SettingType settingType;
 
   @JsonKey(name: "RolloutPercentageItems")
@@ -80,4 +81,8 @@ SettingType parseSettingType(int value) {
     return SettingType.BOOL;
   }
   throw Exception('Unsupported Type');
+}
+
+int settingTypeToInt(SettingType type) {
+  return type.index;
 }
