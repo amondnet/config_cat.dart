@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:async/async.dart';
+import 'package:config_cat/config_cat.dart';
 import 'package:config_cat/src/cache/config_cache.dart';
 import 'package:config_cat/src/config_fetcher.dart';
 import 'package:config_cat/src/configuration_parser.dart';
@@ -17,8 +18,7 @@ class AutoPollingPolicy extends RefreshPolicy {
   Stream<ConfigurationChangedEvent> stream;
   static final ConfigurationParser _parser = new ConfigurationParser();
   Duration pollingInterval;
-  Future _initFuture;
-  bool _initCompleted = false;
+  Completer<void> _initCompleter = Completer<ProjectConfig>();
 
   AutoPollingPolicy(
     ConfigCache cache,
@@ -34,13 +34,10 @@ class AutoPollingPolicy extends RefreshPolicy {
   }
 
   Future<void> _init() async {
-    if (_initFuture == null) {
-      _initFuture = _refreshAsync('init');
-      await _initFuture.whenComplete(() {
-        _initCompleted = true;
-      });
+    if (!_initCompleter.isCompleted) {
+      _initCompleter.complete(_refreshAsync('init'));
     }
-    return _initFuture;
+    return _initCompleter.future;
   }
 
   void start() async {
@@ -59,11 +56,17 @@ class AutoPollingPolicy extends RefreshPolicy {
 
   @override
   Future<Configurations> getConfiguration() async {
+    if (this._initCompleter.isCompleted) {
+      return Future.value(cache.get().configurations);
+    }
+    return this._initCompleter.future.then((v) {
+      return cache.get().configurations;
+    });
+    /*
     var d = this._maxInitWaitExpire.difference(DateTime.now().toUtc());
     if (!_initCompleted && d > Duration.zero) {
       await _init().timeout(d);
-    }
-    return Future.value(cache.get().configurations);
+    }*/
   }
 
   @override
@@ -82,6 +85,9 @@ class AutoPollingPolicy extends RefreshPolicy {
     if (response.isFetched && lastConfig != newConfig) {
       cache.set(newConfig);
       _broadcastConfigurationChanged(newConfig.configurations);
+    }
+    if (!_initCompleter.isCompleted) {
+      _initCompleter.complete(null);
     }
   }
 
