@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:async/async.dart';
 import 'package:config_cat/config_cat.dart';
@@ -76,18 +77,23 @@ class AutoPollingPolicy extends RefreshPolicy {
   }
 
   Future<void> _refreshAsync(String sender) async {
-    logger.finer('_refreshAsync ( $sender )');
+    try {
+      logger.finer('_refreshAsync ( $sender )');
 
-    var lastConfig = cache.get();
-    final response = await fetcher.fetch(lastConfig);
-    final newConfig = response.config;
+      var lastConfig = cache.get();
+      final response = await fetcher.fetch(lastConfig);
+      final newConfig = response.config;
 
-    if (response.isFetched && lastConfig != newConfig) {
-      cache.set(newConfig);
-      _broadcastConfigurationChanged(newConfig.configurations);
-    }
-    if (!_initCompleter.isCompleted) {
-      _initCompleter.complete(null);
+      if (response.isFetched && lastConfig != newConfig) {
+        cache.set(newConfig);
+        _broadcastConfigurationChanged(newConfig.configurations);
+      }
+      if (!_initCompleter.isCompleted) {
+        _initCompleter.complete(null);
+      }
+    } catch (e) {
+      logger.severe(
+          'An error occurred during the scheduler poll execution : $e', e);
     }
   }
 
