@@ -17,6 +17,8 @@ class AutoPollingPolicy extends RefreshPolicy {
   Stream<ConfigurationChangedEvent> stream;
   static final ConfigurationParser _parser = new ConfigurationParser();
   Duration pollingInterval;
+  Future _initFuture;
+  bool _initCompleted = false;
 
   AutoPollingPolicy(
     ConfigCache cache,
@@ -31,8 +33,18 @@ class AutoPollingPolicy extends RefreshPolicy {
     start();
   }
 
+  Future<void> _init() async {
+    if (_initFuture == null) {
+      _initFuture = _refreshAsync('init');
+      await _initFuture.whenComplete(() {
+        _initCompleted = true;
+      });
+    }
+    return _initFuture;
+  }
+
   void start() async {
-    await _refreshAsync('init');
+    await _init();
     timer = new Stream.periodic(pollingInterval, (count) {
       logger.finer('autoPoilling');
       _refresh('auto');
@@ -48,8 +60,8 @@ class AutoPollingPolicy extends RefreshPolicy {
   @override
   Future<Configurations> getConfiguration() async {
     var d = this._maxInitWaitExpire.difference(DateTime.now().toUtc());
-    if (d > Duration.zero) {
-      await _refreshAsync("init").timeout(d);
+    if (!_initCompleted && d > Duration.zero) {
+      await _init().timeout(d);
     }
     return Future.value(cache.get().configurations);
   }

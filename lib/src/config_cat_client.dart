@@ -18,7 +18,7 @@ class ConfigCatClient {
       {Dio dio,
       ConfigCache cache,
       this.refreshPolicy,
-      this.maxWaitTimeForSyncCallsInSeconds}) {
+      this.maxWaitTimeForSyncCallsInSeconds = 10}) {
     if (dio == null) {
       dio = Dio();
     }
@@ -28,9 +28,12 @@ class ConfigCatClient {
       cache = InMemoryConfigCache();
     }
     if (this.refreshPolicy == null) {
-      refreshPolicy = AutoPollingPolicy(cache, fetcher);
+      refreshPolicy = AutoPollingPolicy(cache, fetcher,
+          maxInitWaitTime: Duration(seconds: maxWaitTimeForSyncCallsInSeconds),
+          pollingInterval: Duration(seconds: 60));
     }
   }
+
   Future<dynamic> getValue(String key, dynamic defaultValue, {User user}) {
     return refreshPolicy.getConfiguration().then((config) {
       return _parser.parseValue(config, key, user);
