@@ -1,7 +1,5 @@
 import 'dart:async';
-import 'dart:math';
 
-import 'package:async/async.dart';
 import 'package:config_cat/config_cat.dart';
 import 'package:config_cat/src/cache/config_cache.dart';
 import 'package:config_cat/src/config_fetcher.dart';
